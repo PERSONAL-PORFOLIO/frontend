@@ -89,6 +89,7 @@ export const uploadService = {
 export const contactService = {
   submit: (data) => api.post('/contact', data),
   getAll: () => api.get('/contact'),
+  unreadCount: () => api.get('/contact/unread-count'),
   markRead: (id) => api.patch(`/contact/${id}/read`),
   delete: (id) => api.delete(`/contact/${id}`),
 };

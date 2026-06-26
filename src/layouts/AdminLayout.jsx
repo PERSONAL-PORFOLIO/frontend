@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation, NavLink } from 'react-router-dom';
-import { Layout, Menu, Button, Avatar, Dropdown, Typography, Drawer } from 'antd';
+import { Layout, Menu, Button, Avatar, Dropdown, Typography, Drawer, Badge, notification } from 'antd';
 import {
   DashboardOutlined, UserOutlined, ThunderboltOutlined, HistoryOutlined,
   ProjectOutlined, BookOutlined, SafetyCertificateOutlined, MailOutlined,
   LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, CodeOutlined,
-  SettingOutlined, MenuOutlined, CloseOutlined,
+  SettingOutlined, MenuOutlined, CloseOutlined, BellOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { contactService } from '../services/api';
 
 const { Sider, Header, Content } = Layout;
 
@@ -27,7 +28,7 @@ const MoonIcon = () => (
   </svg>
 );
 
-const menuItems = [
+const buildMenuItems = (unread) => [
   { key: '/admin', icon: <DashboardOutlined />, label: 'Dashboard' },
   { key: '/admin/profile', icon: <UserOutlined />, label: 'Profile' },
   { key: '/admin/skills', icon: <ThunderboltOutlined />, label: 'Skills' },
@@ -35,13 +36,25 @@ const menuItems = [
   { key: '/admin/projects', icon: <ProjectOutlined />, label: 'Projects' },
   { key: '/admin/education', icon: <BookOutlined />, label: 'Education' },
   { key: '/admin/certificates', icon: <SafetyCertificateOutlined />, label: 'Certificates' },
-  { key: '/admin/messages', icon: <MailOutlined />, label: 'Messages' },
+  {
+    key: '/admin/messages',
+    icon: <MailOutlined />,
+    label: (
+      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        Messages
+        {unread > 0 && (
+          <Badge count={unread} size="small" style={{ background: '#6366f1', marginLeft: 6 }} />
+        )}
+      </span>
+    ),
+  },
   { key: '/admin/settings', icon: <SettingOutlined />, label: 'Settings' },
 ];
 
 /* ── Sidebar content — shared between desktop Sider & mobile Drawer ── */
-const SidebarContent = ({ collapsed, onNavigate }) => {
+const SidebarContent = ({ collapsed, onNavigate, unread }) => {
   const location = useLocation();
+  const items = buildMenuItems(unread);
   return (
     <>
       <div style={{
@@ -66,7 +79,7 @@ const SidebarContent = ({ collapsed, onNavigate }) => {
       <Menu
         mode="inline"
         selectedKeys={[location.pathname]}
-        items={menuItems.map(item => ({ ...item, onClick: () => onNavigate(item.key) }))}
+        items={items.map(item => ({ ...item, onClick: () => onNavigate(item.key) }))}
         style={{ background: 'transparent', border: 'none', marginTop: 8 }}
       />
     </>
@@ -77,6 +90,9 @@ const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const [unread, setUnread] = useState(0);
+  const prevUnread = useRef(0);
+  const [notifApi, notifContext] = notification.useNotification();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -91,6 +107,35 @@ const AdminLayout = () => {
 
   /* ── Close mobile drawer on route change ── */
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+
+  /* ── Poll unread count every 30 s ── */
+  const fetchUnread = useCallback(async () => {
+    try {
+      const res = await contactService.unreadCount();
+      const count = res.data?.data?.count ?? 0;
+      if (count > prevUnread.current && prevUnread.current !== null) {
+        notifApi.info({
+          message: 'New message received',
+          description: `You have ${count} unread message${count > 1 ? 's' : ''}.`,
+          icon: <MailOutlined style={{ color: '#6366f1' }} />,
+          placement: 'topRight',
+          duration: 6,
+          onClick: () => navigate('/admin/messages'),
+          style: { cursor: 'pointer' },
+        });
+      }
+      prevUnread.current = count;
+      setUnread(count);
+    } catch {
+      /* silently ignore if not authed yet */
+    }
+  }, [notifApi, navigate]);
+
+  useEffect(() => {
+    fetchUnread();
+    const timer = setInterval(fetchUnread, 30_000);
+    return () => clearInterval(timer);
+  }, [fetchUnread]);
 
   const handleLogout = () => { logout(); navigate('/admin/login'); };
 
@@ -107,6 +152,7 @@ const AdminLayout = () => {
 
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--admin-layout-bg)' }}>
+      {notifContext}
 
       {/* ── Desktop: fixed sidebar ── */}
       {!isMobile && (
@@ -124,7 +170,7 @@ const AdminLayout = () => {
             transition: 'background 0.3s ease',
           }}
         >
-          <SidebarContent collapsed={collapsed} onNavigate={handleNavigate} />
+          <SidebarContent collapsed={collapsed} onNavigate={handleNavigate} unread={unread} />
         </Sider>
       )}
 
@@ -141,7 +187,7 @@ const AdminLayout = () => {
           }}
           closeIcon={null}
         >
-          <SidebarContent collapsed={false} onNavigate={handleNavigate} />
+          <SidebarContent collapsed={false} onNavigate={handleNavigate} unread={unread} />
         </Drawer>
       )}
 
@@ -177,6 +223,17 @@ const AdminLayout = () => {
                 View Site ↗
               </NavLink>
             )}
+
+            {/* ── Notification bell ── */}
+            <Badge count={unread} size="small" offset={[-2, 2]} styles={{ indicator: { background: '#6366f1' } }}>
+              <Button
+                type="text"
+                icon={<BellOutlined style={{ fontSize: 18 }} />}
+                onClick={() => navigate('/admin/messages')}
+                title={unread > 0 ? `${unread} unread message${unread > 1 ? 's' : ''}` : 'Messages'}
+                style={{ color: unread > 0 ? '#6366f1' : 'var(--color-text-muted)', padding: '0 6px' }}
+              />
+            </Badge>
 
             <button className="theme-toggle" onClick={toggle} title={isDark ? 'Light mode' : 'Dark mode'}>
               {isDark ? <SunIcon /> : <MoonIcon />}
