@@ -91,6 +91,7 @@ export const contactService = {
   getAll: () => api.get('/contact'),
   unreadCount: () => api.get('/contact/unread-count'),
   markRead: (id) => api.patch(`/contact/${id}/read`),
+  reply: (id, data) => api.post(`/contact/${id}/reply`, data),
   delete: (id) => api.delete(`/contact/${id}`),
 };
 
