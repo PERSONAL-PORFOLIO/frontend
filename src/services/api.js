@@ -89,6 +89,7 @@ export const uploadService = {
 export const contactService = {
   submit: (data) => api.post('/contact', data),
   getAll: () => api.get('/contact'),
+  getOne: (id) => api.get(`/contact/${id}`),
   unreadCount: () => api.get('/contact/unread-count'),
   markRead: (id) => api.patch(`/contact/${id}/read`),
   reply: (id, data) => api.post(`/contact/${id}/reply`, data),

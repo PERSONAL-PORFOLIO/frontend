@@ -27,6 +27,7 @@ import AdminProjects from '@/pages/Admin/Projects/AdminProjects';
 import AdminEducation from '@/pages/Admin/Education/AdminEducation';
 import AdminCertificates from '@/pages/Admin/Certificates/AdminCertificates';
 import AdminMessages from '@/pages/Admin/Messages/AdminMessages';
+import AdminMessageDetail from '@/pages/Admin/Messages/AdminMessageDetail';
 import AdminSettings from '@/pages/Admin/Settings/AdminSettings';
 
 const App = () => (
@@ -57,6 +58,7 @@ const App = () => (
         <Route path="education" element={<AdminEducation />} />
         <Route path="certificates" element={<AdminCertificates />} />
         <Route path="messages" element={<AdminMessages />} />
+        <Route path="messages/:id" element={<AdminMessageDetail />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>
     </Routes>
