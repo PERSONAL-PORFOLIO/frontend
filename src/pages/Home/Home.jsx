@@ -1,3 +1,4 @@
+import SEO from '@/components/SEO';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -9,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import useFetch from '@/hooks/useFetch';
-import { profileService, projectService, skillService, experienceService } from '@/services/api';
+import { profileService, projectService, skillService, experienceService, testimonialService } from '@/services/api';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 
@@ -95,6 +96,7 @@ const Home = () => {
   const { data: skills } = useFetch(skillService.getAll);
   const { data: allProjects } = useFetch(projectService.getAll);
   const { data: experiences } = useFetch(experienceService.getAll);
+  const { data: testimonials } = useFetch(testimonialService.getAll);
 
   const topSkills = skills?.slice(0, 8) || [];
   const featuredProjects = projects?.slice(0, 3) || [];
@@ -107,8 +109,16 @@ const Home = () => {
     yearsExp && { icon: <TrophyOutlined />, label: 'Years Experience', value: yearsExp, suffix: '+', color: '#a855f7' },
   ].filter(Boolean);
 
+  const seoDescription = profile?.summary
+    ? profile.summary.slice(0, 160)
+    : `${profile?.fullName || 'Tim'}'s software engineering portfolio — skills, projects, experience and more.`;
+
   return (
     <div>
+      <SEO
+        title={profile?.fullName ? `${profile.fullName} — Software Engineer` : undefined}
+        description={seoDescription}
+      />
       {/* ─── HERO ─────────────────────────────── */}
       <section style={{
         minHeight: '95vh',
@@ -204,7 +214,35 @@ const Home = () => {
               {/* Text */}
               <div style={{ flex: 1, minWidth: 280 }}>
                 <motion.div {...fadeUp(0)}>
-                  <span className="section-eyebrow">{settings.heroBadge || 'Available for work'}</span>
+                  {settings.availableForWork !== false ? (
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '6px 14px', borderRadius: 999,
+                      background: 'rgba(34,197,94,0.1)',
+                      border: '1px solid rgba(34,197,94,0.3)',
+                      color: '#16a34a', fontWeight: 600, fontSize: '0.82rem',
+                      letterSpacing: '0.02em', marginBottom: 18,
+                    }}>
+                      <span style={{
+                        width: 8, height: 8, borderRadius: '50%', background: '#22c55e',
+                        display: 'inline-block', flexShrink: 0,
+                        animation: 'afw-ping 1.8s cubic-bezier(0,0,0.2,1) infinite',
+                      }} />
+                      {settings.heroBadge || 'Available for work'}
+                    </span>
+                  ) : (
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '6px 14px', borderRadius: 999,
+                      background: 'rgba(156,163,175,0.1)',
+                      border: '1px solid rgba(156,163,175,0.25)',
+                      color: 'var(--color-text-muted)', fontWeight: 600, fontSize: '0.82rem',
+                      letterSpacing: '0.02em', marginBottom: 18,
+                    }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#9ca3af', display: 'inline-block', flexShrink: 0 }} />
+                      Not available right now
+                    </span>
+                  )}
                 </motion.div>
 
                 <motion.h1 {...fadeUp(0.1)} style={{
@@ -491,6 +529,98 @@ const Home = () => {
         </section>
       )}
 
+      {/* ─── TESTIMONIALS ────────────────────── */}
+      {testimonials?.length > 0 && (
+        <section className="section" style={{ borderTop: '1px solid rgba(99,102,241,0.08)' }}>
+          <div className="section-inner">
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
+              <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Kind Words</span>
+            </div>
+            <motion.h2
+              className="section-title"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              What People Say
+            </motion.h2>
+            <p className="section-subtitle">Feedback from clients and collaborators</p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 24,
+              marginTop: 16,
+            }}>
+              {testimonials.map((t, i) => (
+                <motion.div
+                  key={t._id}
+                  className="glow-card"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 20 }}
+                >
+                  {/* Quote mark */}
+                  <div style={{
+                    fontSize: 48, lineHeight: 1, color: 'var(--color-primary-light)',
+                    opacity: 0.35, fontFamily: 'Georgia, serif', marginTop: -8,
+                  }}>
+                    &ldquo;
+                  </div>
+
+                  {/* Quote text */}
+                  <p style={{
+                    color: 'var(--color-text)',
+                    fontSize: '0.95rem',
+                    lineHeight: 1.8,
+                    flex: 1,
+                    marginTop: -20,
+                  }}>
+                    {t.quote}
+                  </p>
+
+                  {/* Stars */}
+                  {t.rating > 0 && (
+                    <div style={{ display: 'flex', gap: 3 }}>
+                      {Array.from({ length: 5 }).map((_, s) => (
+                        <span key={s} style={{
+                          color: s < t.rating ? '#f59e0b' : 'rgba(99,102,241,0.2)',
+                          fontSize: '1rem',
+                        }}>★</span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Author */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, borderTop: '1px solid rgba(99,102,241,0.1)', paddingTop: 18 }}>
+                    <Avatar
+                      src={t.avatar || undefined}
+                      style={{
+                        background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        width: 44, height: 44, lineHeight: '44px', flexShrink: 0,
+                      }}
+                    >
+                      {!t.avatar && (t.name?.[0]?.toUpperCase() || '?')}
+                    </Avatar>
+                    <div>
+                      <div style={{ color: 'var(--color-heading)', fontWeight: 700, fontSize: '0.95rem' }}>{t.name}</div>
+                      <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>
+                        {[t.role, t.company].filter(Boolean).join(' · ')}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ─── CTA BANNER ───────────────────────── */}
       <section style={{ padding: '100px 0' }}>
         <div className="section-inner">
@@ -550,6 +680,11 @@ const Home = () => {
       <style>{`
         @media (max-width: 768px) {
           .scroll-chevron { display: none !important; }
+        }
+        @keyframes afw-ping {
+          0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.55); }
+          70%  { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+          100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
         }
       `}</style>
     </div>

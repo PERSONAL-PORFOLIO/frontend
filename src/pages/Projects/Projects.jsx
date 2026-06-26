@@ -1,9 +1,12 @@
+import SEO from '@/components/SEO';
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Spin, Result, Button, Empty } from 'antd';
-import { GithubOutlined, LinkOutlined, StarFilled } from '@ant-design/icons';
+import { Result, Button, Empty } from 'antd';
+import { GithubOutlined, LinkOutlined, StarFilled, ArrowRightOutlined } from '@ant-design/icons';
 import useFetch from '@/hooks/useFetch';
 import { projectService } from '@/services/api';
+import { CardSkeleton, skeletonStyle } from '@/components/SkeletonCard';
 
 /* Gradient palette per card index */
 const CARD_GRADIENTS = [
@@ -17,6 +20,7 @@ const CARD_GRADIENTS = [
 const EMOJIS = ['🛠️', '🚀', '💡', '⚡', '🔥', '🌐'];
 
 const Projects = () => {
+  const navigate = useNavigate();
   const { data: projects, loading, error, refetch } = useFetch(projectService.getAll);
   const [activeTech, setActiveTech] = useState('All');
 
@@ -34,6 +38,7 @@ const Projects = () => {
 
   return (
     <div className="section">
+      <SEO title="Projects" description="Browse Tim's software projects — from web apps to full-stack systems, built with modern technologies." />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Portfolio</span>
@@ -44,7 +49,12 @@ const Projects = () => {
         <p className="section-subtitle">Things I&apos;ve built — click a tag to filter</p>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}><Spin size="large" /></div>
+          <>
+            <style>{skeletonStyle}</style>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 24 }}>
+              {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
+            </div>
+          </>
         ) : error ? (
           <Result status="error" title="Failed to load projects" subTitle={error} extra={<Button type="primary" onClick={refetch}>Retry</Button>} />
         ) : !projects?.length ? (
@@ -97,8 +107,9 @@ const Projects = () => {
                       initial={{ opacity: 0, scale: 0.9, y: 30 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                      onClick={() => navigate(`/projects/${project._id}`)}
                       transition={{ delay: i * 0.06, duration: 0.45 }}
-                      style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+                      style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', cursor: 'pointer' }}
                     >
                       {/* Coloured top bar */}
                       <div style={{
@@ -180,13 +191,27 @@ const Projects = () => {
                                 key={t}
                                 className="tech-tag"
                                 style={{ cursor: 'pointer' }}
-                                onClick={() => setActiveTech(t)}
+                                onClick={e => { e.stopPropagation(); setActiveTech(t); }}
                               >
                                 {t}
                               </span>
                             ))}
                           </div>
                         )}
+
+                        {/* View details footer */}
+                        <div style={{
+                          marginTop: 16, paddingTop: 14,
+                          borderTop: project.technologies?.length ? 'none' : '1px solid rgba(99,102,241,0.1)',
+                          display: 'flex', justifyContent: 'flex-end',
+                        }}>
+                          <span style={{
+                            color: 'var(--color-primary-light)', fontSize: '0.82rem', fontWeight: 600,
+                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                          }}>
+                            View details <ArrowRightOutlined style={{ fontSize: 11 }} />
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   ))}

@@ -5,7 +5,8 @@ import {
   DashboardOutlined, UserOutlined, ThunderboltOutlined, HistoryOutlined,
   ProjectOutlined, BookOutlined, SafetyCertificateOutlined, MailOutlined,
   LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, CodeOutlined,
-  SettingOutlined, MenuOutlined, CloseOutlined, BellOutlined,
+  SettingOutlined, MenuOutlined, CloseOutlined, BellOutlined, StarOutlined,
+  EditOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -36,6 +37,8 @@ const buildMenuItems = (unread) => [
   { key: '/admin/projects', icon: <ProjectOutlined />, label: 'Projects' },
   { key: '/admin/education', icon: <BookOutlined />, label: 'Education' },
   { key: '/admin/certificates', icon: <SafetyCertificateOutlined />, label: 'Certificates' },
+  { key: '/admin/testimonials', icon: <StarOutlined />, label: 'Testimonials' },
+  { key: '/admin/blog', icon: <EditOutlined />, label: 'Blog' },
   {
     key: '/admin/messages',
     icon: <MailOutlined />,

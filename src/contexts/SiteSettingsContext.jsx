@@ -58,11 +58,12 @@ const DEFAULTS = {
   pageSeo: {},
   navVisibility: {
     about: true, skills: true, experience: true,
-    projects: true, education: true, certificates: true, contact: true,
+    projects: true, education: true, certificates: true, blog: true, contact: true,
   },
   showFooter: true,
-  footerText: 'Tim Bin · Crafted with React & Ant Design',
+  footerText: '@2026 Tim.',
   allowContactForm: true,
+  availableForWork: true,
   heroBadge: 'Available for work',
   ctaHeading: "Let's Build Something Amazing Together",
   ctaSubtext: "I'm currently open to freelance projects and full-time roles. Let's discuss how I can add value to your team.",
@@ -93,7 +94,14 @@ export const SiteSettingsProvider = ({ children }) => {
     settingsService.getPublic()
       .then(res => {
         if (res.data?.data) {
-          const merged = { ...DEFAULTS, ...res.data.data };
+          const data = res.data.data;
+          const merged = {
+            ...DEFAULTS,
+            ...data,
+            // Deep-merge navVisibility so new keys (e.g. blog) from DEFAULTS
+            // aren't wiped out when the DB record predates them
+            navVisibility: { ...DEFAULTS.navVisibility, ...(data.navVisibility || {}) },
+          };
           setSettings(merged);
         }
       })

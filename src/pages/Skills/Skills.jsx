@@ -1,8 +1,10 @@
+import SEO from '@/components/SEO';
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Spin, Result, Button, Empty } from 'antd';
+import { Result, Button, Empty } from 'antd';
 import useFetch from '@/hooks/useFetch';
 import { skillService } from '@/services/api';
+import { PillSkeleton, skeletonStyle } from '@/components/SkeletonCard';
 
 const CATEGORIES = ['All', 'Frontend', 'Backend', 'Database', 'Mobile', 'DevOps', 'Other'];
 
@@ -40,6 +42,8 @@ const AnimatedBar = ({ level, color }) => {
       overflow: 'hidden',
       position: 'relative',
     }}>
+      <SEO title="Skills" description="Explore Tim's technical skills across frontend, backend, DevOps, and more." />
+
       <div style={{
         position: 'absolute', left: 0, top: 0, bottom: 0,
         width: `${width}%`,
@@ -95,7 +99,15 @@ const Skills = () => {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}><Spin size="large" /></div>
+          <>
+            <style>{skeletonStyle}</style>
+            {['Frontend', 'Backend', 'Other'].map(cat => (
+              <div key={cat} style={{ marginBottom: 48 }}>
+                <div style={{ width: 120, height: 20, background: 'rgba(99,102,241,0.1)', borderRadius: 8, marginBottom: 20 }} />
+                <PillSkeleton count={8} />
+              </div>
+            ))}
+          </>
         ) : error ? (
           <Result status="error" title="Failed to load skills" subTitle={error} extra={<Button type="primary" onClick={refetch}>Retry</Button>} />
         ) : !skills?.length ? (

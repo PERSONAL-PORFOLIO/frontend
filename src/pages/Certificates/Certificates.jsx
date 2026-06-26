@@ -1,3 +1,4 @@
+import SEO from '@/components/SEO';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Spin, Button, Image, Result } from 'antd';
@@ -10,6 +11,9 @@ const Certificates = () => {
 
   return (
     <div className="section">
+      
+      <SEO title="Certificates" description="Professional certifications and courses completed by Tim." />
+      
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Achievements</span>

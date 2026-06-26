@@ -1,3 +1,4 @@
+import SEO from '@/components/SEO';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Form, Input, Button, App, Row, Col, Tooltip } from 'antd';
@@ -47,6 +48,7 @@ const Contact = () => {
 
   return (
     <div className="section">
+      <SEO title="Contact" description="Get in touch with Tim — open to new opportunities and collaborations." />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Say Hello</span>

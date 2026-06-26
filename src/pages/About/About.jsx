@@ -1,3 +1,4 @@
+import SEO from '@/components/SEO';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Row, Col, Spin, Avatar, Tooltip, Result, Button } from 'antd';
@@ -39,6 +40,7 @@ const About = () => {
 
   return (
     <div className="section">
+      <SEO title="About" description="Learn about Tim's background, story, and what drives him as a software engineer." />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>About Me</span>

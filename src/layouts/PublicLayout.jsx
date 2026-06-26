@@ -6,6 +6,7 @@ import { useSiteSettings } from '../contexts/SiteSettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { analyticsService, profileService } from '../services/api';
 import useFetch from '../hooks/useFetch';
+import AIChatWidget from '../components/AIChatWidget';
 
 /* ── Tiny inline SVG icons ── */
 const SunIcon = () => (
@@ -61,6 +62,7 @@ const ALL_NAV_LINKS = [
   { path: '/projects', label: 'Projects', key: 'projects' },
   { path: '/education', label: 'Education', key: 'education' },
   { path: '/certificates', label: 'Certs', key: 'certificates' },
+  { path: '/blog', label: 'Blog', key: 'blog' },
   { path: '/contact', label: 'Contact', key: 'contact' },
 ];
 
@@ -496,6 +498,9 @@ const PublicLayout = () => {
           .mobile-right { display: flex !important; }
         }
       `}</style>
+
+      {/* ── AI Chat Widget ── */}
+      <AIChatWidget />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { ConfigProvider, theme as antTheme, App as AntdApp } from 'antd';
 import App from '@/App';
 import { SiteSettingsProvider } from '@/contexts/SiteSettingsContext';
@@ -38,12 +39,14 @@ const ThemedConfigProvider = ({ children }) => {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ThemeProvider>
-        <ThemedConfigProvider>
-          <App />
-        </ThemedConfigProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ThemeProvider>
+          <ThemedConfigProvider>
+            <App />
+          </ThemedConfigProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>,
 );

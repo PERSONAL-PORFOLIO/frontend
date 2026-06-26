@@ -111,6 +111,7 @@ const PAGE_OPTIONS = [
   { key: 'projects', label: 'Projects', path: '/projects' },
   { key: 'education', label: 'Education', path: '/education' },
   { key: 'certificates', label: 'Certificates', path: '/certificates' },
+  { key: 'blog', label: 'Blog', path: '/blog' },
   { key: 'contact', label: 'Contact', path: '/contact' },
 ];
 
@@ -221,7 +222,7 @@ const PageSeoEditor = ({ pageSeo, onChange, siteUrl, globalTitle, globalDesc }) 
 const AdminSettings = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
-  const VALID_TABS = ['seo', 'nav', 'footer', 'contact', 'home', 'advanced'];
+  const VALID_TABS = ['seo', 'nav', 'footer', 'contact', 'autoreply', 'home', 'advanced'];
   const hashTab = window.location.hash.replace('#', '');
   const [activeTab, setActiveTab] = useState(VALID_TABS.includes(hashTab) ? hashTab : 'seo');
   const handleTabChange = useCallback((key) => {
@@ -230,13 +231,15 @@ const AdminSettings = () => {
   }, []);
 
   const [saving, setSaving] = useState(false);
-  const [navVisibility, setNavVisibility] = useState({ about: true, skills: true, experience: true, projects: true, education: true, certificates: true, contact: true });
+  const [navVisibility, setNavVisibility] = useState({ about: true, skills: true, experience: true, projects: true, education: true, certificates: true, blog: true, contact: true });
   const [typingRoles, setTypingRoles] = useState([]);
   const [newRole, setNewRole] = useState('');
   const [showFooter, setShowFooter] = useState(true);
   const [allowContactForm, setAllowContactForm] = useState(true);
+  const [availableForWork, setAvailableForWork] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [pageSeo, setPageSeo] = useState({});
+  const [autoReply, setAutoReply] = useState({ enabled: false, subject: 'Thanks for reaching out, {{name}}!', body: '' });
 
   useEffect(() => {
     settingsService.getAdmin()
@@ -260,8 +263,10 @@ const AdminSettings = () => {
         setTypingRoles(s.typingRoles || []);
         setShowFooter(s.showFooter !== false);
         setAllowContactForm(s.allowContactForm !== false);
+        setAvailableForWork(s.availableForWork !== false);
         setMaintenanceMode(s.maintenanceMode === true);
         setPageSeo(s.pageSeo || {});
+        if (s.autoReply) setAutoReply(s.autoReply);
       })
       .catch(() => message.error('Failed to load settings'));
   }, [form, message]);
@@ -270,7 +275,7 @@ const AdminSettings = () => {
     try {
       const values = await form.validateFields();
       setSaving(true);
-      await settingsService.update({ ...values, navVisibility, typingRoles, showFooter, allowContactForm, maintenanceMode, pageSeo });
+      await settingsService.update({ ...values, navVisibility, typingRoles, showFooter, allowContactForm, availableForWork, maintenanceMode, pageSeo, autoReply });
       message.success('Settings saved!');
     } catch (err) {
       if (err?.errorFields) return;
@@ -292,7 +297,7 @@ const AdminSettings = () => {
     { key: 'about', label: 'About' }, { key: 'skills', label: 'Skills' },
     { key: 'experience', label: 'Experience' }, { key: 'projects', label: 'Projects' },
     { key: 'education', label: 'Education' }, { key: 'certificates', label: 'Certificates' },
-    { key: 'contact', label: 'Contact' },
+    { key: 'blog', label: 'Blog' }, { key: 'contact', label: 'Contact' },
   ];
 
   // Watch form fields for live preview
@@ -429,7 +434,17 @@ const AdminSettings = () => {
       children: (
         <div>
           <SettingCard icon={<HomeOutlined />} title="Hero Badge & CTA Text" desc="Customize the availability badge and call-to-action section">
-            <Form.Item name="heroBadge" label={<span style={{ color: 'var(--color-text-muted)' }}>Hero Badge Text</span>}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, padding: '12px 16px', borderRadius: 10, background: availableForWork ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)', border: `1px solid ${availableForWork ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: availableForWork ? '#22c55e' : '#ef4444', display: 'inline-block', boxShadow: availableForWork ? '0 0 8px rgba(34,197,94,0.6)' : 'none' }} />
+                <span style={{ color: 'var(--color-heading)', fontWeight: 600, fontSize: '0.92rem' }}>
+                  {availableForWork ? 'Available for work' : 'Not available'}
+                </span>
+                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>— shown as badge on hero</span>
+              </div>
+              <Switch checked={availableForWork} onChange={setAvailableForWork} style={{ background: availableForWork ? '#22c55e' : undefined }} />
+            </div>
+            <Form.Item name="heroBadge" label={<span style={{ color: 'var(--color-text-muted)' }}>Badge Text</span>}>
               <Input placeholder="Available for work" />
             </Form.Item>
             <Form.Item name="ctaHeading" label={<span style={{ color: 'var(--color-text-muted)' }}>CTA Section Heading</span>}>
@@ -465,7 +480,65 @@ const AdminSettings = () => {
       ),
     },
 
-    /* ── Tab 6: Advanced ─────────────────────── */
+    /* ── Tab 6: Auto-Reply ───────────────────── */
+    {
+      key: 'autoreply',
+      label: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MailOutlined /> Auto-Reply</span>,
+      children: (
+        <div>
+          <SettingCard icon={<MailOutlined />} title="Auto-Reply Email" desc="Automatically send a confirmation email to visitors when they submit the contact form">
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 16px', borderRadius: 10, marginBottom: 20,
+              background: autoReply.enabled ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)',
+              border: autoReply.enabled ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(99,102,241,0.15)',
+              transition: 'all 0.3s',
+            }}>
+              <div>
+                <div style={{ color: autoReply.enabled ? '#16a34a' : 'var(--color-heading)', fontWeight: 600 }}>
+                  {autoReply.enabled ? '✅ Auto-reply is ON' : 'Auto-reply is OFF'}
+                </div>
+                <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>Sends a reply instantly when someone submits the contact form</div>
+              </div>
+              <Switch checked={autoReply.enabled} onChange={v => setAutoReply(a => ({ ...a, enabled: v }))}
+                style={{ background: autoReply.enabled ? '#22c55e' : undefined }} />
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>Email Subject</label>
+              <Input
+                value={autoReply.subject}
+                onChange={e => setAutoReply(a => ({ ...a, subject: e.target.value }))}
+                placeholder="Thanks for reaching out, {{name}}!"
+                disabled={!autoReply.enabled}
+              />
+              <div style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', marginTop: 5 }}>
+                Variables: <code style={{ color: 'var(--color-primary-light)' }}>{'{{name}}'}</code>, <code style={{ color: 'var(--color-primary-light)' }}>{'{{subject}}'}</code>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
+                Email Body <span style={{ opacity: 0.6 }}>(HTML supported)</span>
+              </label>
+              <Input.TextArea
+                rows={10}
+                value={autoReply.body}
+                onChange={e => setAutoReply(a => ({ ...a, body: e.target.value }))}
+                disabled={!autoReply.enabled}
+                placeholder={`<p>Hi <strong>{{name}}</strong>,</p>\n<p>Thank you for reaching out! I've received your message about "<strong>{{subject}}</strong>" and will get back to you as soon as possible.</p>\n<p>Best regards,<br><strong>Tim</strong></p>`}
+                style={{ fontFamily: 'monospace', fontSize: '0.82rem' }}
+              />
+              <div style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', marginTop: 5 }}>
+                Variables: <code style={{ color: 'var(--color-primary-light)' }}>{'{{name}}'}</code>, <code style={{ color: 'var(--color-primary-light)' }}>{'{{subject}}'}</code>, <code style={{ color: 'var(--color-primary-light)' }}>{'{{message}}'}</code> · Leave blank to use the default template.
+              </div>
+            </div>
+          </SettingCard>
+        </div>
+      ),
+    },
+
+    /* ── Tab 7: Advanced ─────────────────────── */
     {
       key: 'advanced',
       label: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><SettingOutlined /> Advanced</span>,

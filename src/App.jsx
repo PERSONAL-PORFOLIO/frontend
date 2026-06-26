@@ -11,9 +11,12 @@ import About from '@/pages/About/About';
 import Skills from '@/pages/Skills/Skills';
 import Experience from '@/pages/Experience/Experience';
 import Projects from '@/pages/Projects/Projects';
+import ProjectDetail from '@/pages/Projects/ProjectDetail';
 import Education from '@/pages/Education/Education';
 import Certificates from '@/pages/Certificates/Certificates';
 import Contact from '@/pages/Contact/Contact';
+import Blog from '@/pages/Blog/Blog';
+import BlogPost from '@/pages/Blog/BlogPost';
 
 // Auth
 import Login from '@/pages/Auth/Login';
@@ -29,6 +32,9 @@ import AdminCertificates from '@/pages/Admin/Certificates/AdminCertificates';
 import AdminMessages from '@/pages/Admin/Messages/AdminMessages';
 import AdminMessageDetail from '@/pages/Admin/Messages/AdminMessageDetail';
 import AdminSettings from '@/pages/Admin/Settings/AdminSettings';
+import AdminTestimonials from '@/pages/Admin/Testimonials/AdminTestimonials';
+import AdminBlog from '@/pages/Admin/Blog/AdminBlog';
+import NotFound from '@/pages/NotFound';
 
 const App = () => (
   <AuthProvider>
@@ -40,9 +46,12 @@ const App = () => (
         <Route path="skills" element={<Skills />} />
         <Route path="experience" element={<Experience />} />
         <Route path="projects" element={<Projects />} />
+        <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="education" element={<Education />} />
         <Route path="certificates" element={<Certificates />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="blog" element={<Blog />} />
+        <Route path="blog/:slug" element={<BlogPost />} />
       </Route>
 
       {/* Auth */}
@@ -59,8 +68,12 @@ const App = () => (
         <Route path="certificates" element={<AdminCertificates />} />
         <Route path="messages" element={<AdminMessages />} />
         <Route path="messages/:id" element={<AdminMessageDetail />} />
+        <Route path="testimonials" element={<AdminTestimonials />} />
+        <Route path="blog" element={<AdminBlog />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   </AuthProvider>
 );

@@ -1,9 +1,11 @@
+import SEO from '@/components/SEO';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Spin, Result, Button } from 'antd';
+import { Result, Button } from 'antd';
 import { BankOutlined, CalendarOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import useFetch from '@/hooks/useFetch';
 import { experienceService } from '@/services/api';
+import { RowSkeleton, skeletonStyle } from '@/components/SkeletonCard';
 
 const formatDate = (d) =>
   d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
@@ -13,6 +15,9 @@ const Experience = () => {
 
   return (
     <div className="section">
+
+      <SEO title="Experience" description="Tim's professional work experience and career journey in software engineering." />
+
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Work History</span>
@@ -23,7 +28,12 @@ const Experience = () => {
         <p className="section-subtitle">My professional journey so far</p>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}><Spin size="large" /></div>
+          <>
+            <style>{skeletonStyle}</style>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {Array.from({ length: 4 }).map((_, i) => <RowSkeleton key={i} lines={3} />)}
+            </div>
+          </>
         ) : error ? (
           <Result status="error" title="Failed to load" subTitle={error} extra={<Button type="primary" onClick={refetch}>Retry</Button>} />
         ) : !experiences?.length ? (
@@ -118,7 +128,7 @@ const Experience = () => {
                     </p>
                   )}
 
-                  {exp.technologies?.length > 0 && (
+                                   {exp.technologies?.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, paddingTop: 12, borderTop: '1px solid rgba(99,102,241,0.1)' }}>
                       {exp.technologies.map(t => <span key={t} className="tech-tag">{t}</span>)}
                     </div>

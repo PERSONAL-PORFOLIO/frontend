@@ -109,3 +109,23 @@ export const analyticsService = {
   pages: () => api.get('/analytics/pages'),
   recent: () => api.get('/analytics/recent'),
 };
+
+export const aiService = {
+  chat: (messages) => api.post('/ai/chat', { messages }),
+};
+
+export const testimonialService = {
+  getAll: () => api.get('/testimonials'),
+  create: (data) => api.post('/testimonials', data),
+  update: (id, data) => api.put(`/testimonials/${id}`, data),
+  delete: (id) => api.delete(`/testimonials/${id}`),
+};
+
+export const postService = {
+  getAll: (params) => api.get('/posts', { params }),
+  getOne: (slug) => api.get(`/posts/${slug}`),
+  getAdmin: () => api.get('/posts/admin/all'),
+  create: (data) => api.post('/posts', data),
+  update: (id, data) => api.put(`/posts/${id}`, data),
+  delete: (id) => api.delete(`/posts/${id}`),
+};

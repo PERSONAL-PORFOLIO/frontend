@@ -1,9 +1,11 @@
+import SEO from '@/components/SEO';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Spin, Result, Button } from 'antd';
+import { Result, Button } from 'antd';
 import { BookOutlined, CalendarOutlined } from '@ant-design/icons';
 import useFetch from '@/hooks/useFetch';
 import { educationService } from '@/services/api';
+import { RowSkeleton, skeletonStyle } from '@/components/SkeletonCard';
 
 const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
 
@@ -12,6 +14,7 @@ const Education = () => {
 
   return (
     <div className="section">
+      <SEO title="Education" description="Tim's academic background and educational qualifications." />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Academic</span>
@@ -20,7 +23,12 @@ const Education = () => {
         <p className="section-subtitle">My academic background</p>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}><Spin size="large" /></div>
+          <>
+            <style>{skeletonStyle}</style>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {Array.from({ length: 3 }).map((_, i) => <RowSkeleton key={i} lines={2} />)}
+            </div>
+          </>
         ) : error ? (
           <Result
             status="error"
@@ -60,7 +68,7 @@ const Education = () => {
                   <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <CalendarOutlined /> {formatDate(edu.startDate)} – {formatDate(edu.endDate)}
                   </span>
-                  {edu.description && (
+                                   {edu.description && (
                     <p style={{ color: 'var(--color-text-muted)', marginTop: 12, lineHeight: 1.7, fontSize: '0.95rem' }}>{edu.description}</p>
                   )}
                 </div>
