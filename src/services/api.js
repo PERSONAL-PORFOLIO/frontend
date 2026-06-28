@@ -102,14 +102,6 @@ export const settingsService = {
   update: (data) => api.put('/settings', data), // protected
 };
 
-export const analyticsService = {
-  track: (page) => api.post('/analytics/track', { page }),
-  overview: () => api.get('/analytics/overview'),
-  timeline: (days) => api.get('/analytics/timeline', { params: { days } }),
-  pages: () => api.get('/analytics/pages'),
-  recent: () => api.get('/analytics/recent'),
-};
-
 export const aiService = {
   chat: (messages) => api.post('/ai/chat', { messages }),
 };

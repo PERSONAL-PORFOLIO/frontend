@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MenuOutlined, CloseOutlined, CodeOutlined } from '@ant-design/icons';
 import { useSiteSettings } from '../contexts/SiteSettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { analyticsService, profileService } from '../services/api';
+import { profileService } from '../services/api';
 import useFetch from '../hooks/useFetch';
 import AIChatWidget from '../components/AIChatWidget';
 
@@ -92,10 +92,6 @@ const PublicLayout = () => {
   useEffect(() => {
     if (typeof window.gtag !== 'function') return;
     window.gtag('event', 'page_view', { page_path: location.pathname });
-  }, [location.pathname]);
-
-  useEffect(() => {
-    analyticsService.track(location.pathname).catch(() => {});
   }, [location.pathname]);
 
   const navLinks = ALL_NAV_LINKS.filter(
