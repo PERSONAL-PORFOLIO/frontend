@@ -26,19 +26,26 @@ const TypingDots = () => (
 
 // Splits text into parts, wrapping URLs in <a> tags
 const renderWithLinks = (text, isDark) => {
-  const urlRegex = /(https?:\/\/\S+)/g;
+  const urlRegex = /(https?:\/\/\S+|mailto:\S+)/g;
   const parts = text.split(urlRegex);
   return parts.map((part, i) => {
     if (!urlRegex.test(part)) return part;
-    // Strip trailing punctuation that isn't part of the URL
-    const clean = part.replace(/[.,)>\]'"!?]+$/, '');
-    const trailing = part.slice(clean.length);
+    const isMailto = part.startsWith('mailto:');
+    let href = part;
+    let display = part;
+    if (isMailto) {
+      href = part;
+      display = part.replace('mailto:', '');
+    }
+    const clean = display.replace(/[.,)>\]'"!?]+$/, '');
+    const trailing = display.slice(clean.length);
+    const hrefClean = isMailto ? `mailto:${clean}` : clean;
     return (
       <React.Fragment key={i}>
         <a
-          href={clean}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={hrefClean}
+          target={isMailto ? '_self' : '_blank'}
+          rel={isMailto ? undefined : 'noopener noreferrer'}
           style={{
             color: isDark ? '#93c5fd' : '#4f46e5',
             textDecoration: 'underline',
@@ -151,7 +158,10 @@ const AIChatWidget = () => {
         body: JSON.stringify({ messages: next }),
       });
 
-      if (!response.ok) throw new Error('Network error');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || 'Network error');
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
