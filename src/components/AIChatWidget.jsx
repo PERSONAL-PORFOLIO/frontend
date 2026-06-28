@@ -144,7 +144,7 @@ const AIChatWidget = () => {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || '') + '/api/ai/chat';
+      const apiUrl = (import.meta.env.VITE_API_URL || '') + '/ai/chat';
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
