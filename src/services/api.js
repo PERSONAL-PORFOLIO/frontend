@@ -14,11 +14,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally — but NOT for the login endpoint itself
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginEndpoint = error.config?.url?.includes('/auth/login');
+    if (error.response?.status === 401 && !isLoginEndpoint) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/admin/login';
@@ -104,13 +105,6 @@ export const settingsService = {
 
 export const aiService = {
   chat: (messages) => api.post('/ai/chat', { messages }),
-};
-
-export const testimonialService = {
-  getAll: () => api.get('/testimonials'),
-  create: (data) => api.post('/testimonials', data),
-  update: (id, data) => api.put(`/testimonials/${id}`, data),
-  delete: (id) => api.delete(`/testimonials/${id}`),
 };
 
 export const postService = {

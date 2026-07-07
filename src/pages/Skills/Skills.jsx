@@ -42,7 +42,7 @@ const AnimatedBar = ({ level, color }) => {
       overflow: 'hidden',
       position: 'relative',
     }}>
-      <SEO title="Skills" description="Explore Tim's technical skills across frontend, backend, DevOps, and more." />
+      <SEO pageKey="skills" />
 
       <div style={{
         position: 'absolute', left: 0, top: 0, bottom: 0,

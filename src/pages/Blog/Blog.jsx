@@ -20,7 +20,7 @@ const Blog = () => {
 
   return (
     <div className="section" style={{ paddingTop: 'clamp(16px, 3vw, 48px)' }}>
-      <SEO title="Blog" description="Articles and thoughts from Tim on software engineering, tech, and building things." />
+      <SEO pageKey="blog" />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Writing</span>

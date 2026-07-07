@@ -38,7 +38,7 @@ const Projects = () => {
 
   return (
     <div className="section">
-      <SEO title="Projects" description="Browse Tim's software projects — from web apps to full-stack systems, built with modern technologies." />
+      <SEO pageKey="projects" />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Portfolio</span>

@@ -12,7 +12,7 @@ const Certificates = () => {
   return (
     <div className="section">
       
-      <SEO title="Certificates" description="Professional certifications and courses completed by Tim." />
+      <SEO pageKey="certificates" />
       
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>

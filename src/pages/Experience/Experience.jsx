@@ -16,7 +16,7 @@ const Experience = () => {
   return (
     <div className="section">
 
-      <SEO title="Experience" description="Tim's professional work experience and career journey in software engineering." />
+      <SEO pageKey="experience" />
 
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>

@@ -48,7 +48,7 @@ const Contact = () => {
 
   return (
     <div className="section">
-      <SEO title="Contact" description="Get in touch with Tim — open to new opportunities and collaborations." />
+      <SEO pageKey="contact" />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Say Hello</span>

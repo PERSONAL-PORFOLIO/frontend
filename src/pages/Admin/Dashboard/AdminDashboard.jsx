@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import {
   ThunderboltOutlined, ProjectOutlined, HistoryOutlined,
   MailOutlined, BookOutlined, SafetyCertificateOutlined,
-  StarOutlined, EditOutlined,
+  EditOutlined,
 } from '@ant-design/icons';
 import useFetch from '../../../hooks/useFetch';
 import {
   skillService, projectService, experienceService,
   contactService, educationService, certificateService,
-  testimonialService, postService,
+  postService,
 } from '../../../services/api';
 
 const StatCard = ({ title, value, icon, color, sub, delay = 0 }) => (
@@ -46,7 +46,6 @@ const AdminDashboard = () => {
   const { data: contacts }      = useFetch(contactService.getAll);
   const { data: educations }    = useFetch(educationService.getAll);
   const { data: certificates }  = useFetch(certificateService.getAll);
-  const { data: testimonials }  = useFetch(testimonialService.getAll);
   const { data: posts }         = useFetch(postService.getAdmin);
 
   const unread       = contacts?.filter(c => !c.read).length ?? 0;
@@ -58,7 +57,6 @@ const AdminDashboard = () => {
     { title: 'Experience',   value: experiences?.length,   icon: <HistoryOutlined />,    color: '#10b981', delay: 0.15 },
     { title: 'Education',    value: educations?.length,    icon: <BookOutlined />,       color: '#8b5cf6', delay: 0.20 },
     { title: 'Certificates', value: certificates?.length,  icon: <SafetyCertificateOutlined />, color: '#f59e0b', delay: 0.25 },
-    { title: 'Testimonials', value: testimonials?.length,  icon: <StarOutlined />,       color: '#ec4899', delay: 0.30 },
     {
       title: 'Blog Posts',
       value: publishedPosts,
