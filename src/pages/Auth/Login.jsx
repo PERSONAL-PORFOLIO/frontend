@@ -31,7 +31,7 @@ const INPUT_BASE = {
 };
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [loginInput, setLoginInput] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [errors, setErrors] = useState({});
@@ -44,8 +44,7 @@ const Login = () => {
 
   const validate = () => {
     const e = {};
-    if (!email) e.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) e.email = 'Enter a valid email';
+    if (!loginInput.trim()) e.login = 'Login is required';
     if (!password) e.password = 'Password is required';
     return e;
   };
@@ -57,22 +56,24 @@ const Login = () => {
     setErrors({});
     setLoading(true);
     try {
-      await login(email, password);
+      await login(loginInput.trim(), password);
       message.success('Welcome back!');
-      navigate('/admin');
+      // Use hard redirect so AuthContext re-reads the token from localStorage
+      // cleanly — avoids React state race condition with ProtectedRoute
+      window.location.replace('/admin');
     } catch (err) {
-      message.error(err.response?.data?.message || 'Invalid credentials');
+      message.error(err.response?.data?.message || 'Invalid login or password');
     } finally {
       setLoading(false);
     }
   };
 
   const focusStyle = (name) => focused === name
-    ? { borderColor: 'rgba(99,102,241,0.6)', boxShadow: '0 0 0 3px rgba(99,102,241,0.13)' }
+    ? { border: '1px solid rgba(99,102,241,0.6)', boxShadow: '0 0 0 3px rgba(99,102,241,0.13)' }
     : {};
 
-  const errorStyle = (name) => errors[name]
-    ? { borderColor: 'rgba(239,68,68,0.5)' }
+  const errorStyle = (field) => errors[field]
+    ? { border: '1px solid rgba(239,68,68,0.5)' }
     : {};
 
   return (
@@ -166,22 +167,22 @@ const Login = () => {
             transition={{ delay: 0.3 }}
             noValidate
           >
-            {/* Email */}
-            <Field label="Email" error={errors.email}>
+            {/* Login */}
+            <Field label="Username / Login" error={errors.login}>
               <div style={{ position: 'relative' }}>
                 <span style={{
                   position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
                   color: '#475569', fontSize: 15, pointerEvents: 'none', userSelect: 'none',
                 }}>@</span>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onFocus={() => setFocused('email')}
+                  type="text"
+                  value={loginInput}
+                  onChange={e => setLoginInput(e.target.value)}
+                  onFocus={() => setFocused('login')}
                   onBlur={() => setFocused('')}
-                  placeholder="admin@yourdomain.com"
-                  autoComplete="email"
-                  style={{ ...INPUT_BASE, paddingLeft: 36, paddingRight: 14, ...focusStyle('email'), ...errorStyle('email') }}
+                  placeholder="your username or email"
+                  autoComplete="username"
+                  style={{ ...INPUT_BASE, paddingLeft: 36, paddingRight: 14, ...focusStyle('login'), ...errorStyle('login') }}
                 />
               </div>
             </Field>

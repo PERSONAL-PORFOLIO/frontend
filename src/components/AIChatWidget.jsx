@@ -102,7 +102,7 @@ const Message = ({ msg, isDark }) => {
   );
 };
 
-const GREETING = "Hi! I'm AskTim — your AI guide to this portfolio. Ask me anything about Tim's skills, projects, experience, or how to get in touch!";
+const GREETING = "Hi! I'm Tim — your AI guide to this portfolio. Ask me anything about Tim's skills, projects, experience, or how to get in touch!";
 
 const STORAGE_KEY = 'asktim_chat_history';
 
@@ -306,7 +306,7 @@ const AIChatWidget = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <AskTimLogo size={36} />
               <div>
-                <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2 }}>AskTim</div>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2 }}>Tim</div>
                 <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.72rem' }}>AI-powered portfolio guide</div>
               </div>
             </div>
@@ -411,7 +411,7 @@ const AIChatWidget = () => {
       }}>
         {!open && (
           <span className="ai-fab-tooltip" style={{ background: t.tooltipBg, color: t.tooltipC }}>
-            AskTim
+            Tim
           </span>
         )}
         {open

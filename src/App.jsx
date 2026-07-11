@@ -32,7 +32,6 @@ import AdminCertificates from '@/pages/Admin/Certificates/AdminCertificates';
 import AdminMessages from '@/pages/Admin/Messages/AdminMessages';
 import AdminMessageDetail from '@/pages/Admin/Messages/AdminMessageDetail';
 import AdminSettings from '@/pages/Admin/Settings/AdminSettings';
-import AdminTestimonials from '@/pages/Admin/Testimonials/AdminTestimonials';
 import AdminBlog from '@/pages/Admin/Blog/AdminBlog';
 import NotFound from '@/pages/NotFound';
 
@@ -68,7 +67,6 @@ const App = () => (
         <Route path="certificates" element={<AdminCertificates />} />
         <Route path="messages" element={<AdminMessages />} />
         <Route path="messages/:id" element={<AdminMessageDetail />} />
-        <Route path="testimonials" element={<AdminTestimonials />} />
         <Route path="blog" element={<AdminBlog />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>

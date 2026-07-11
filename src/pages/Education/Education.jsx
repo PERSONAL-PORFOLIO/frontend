@@ -14,7 +14,7 @@ const Education = () => {
 
   return (
     <div className="section">
-      <SEO title="Education" description="Tim's academic background and educational qualifications." />
+      <SEO pageKey="education" />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Academic</span>

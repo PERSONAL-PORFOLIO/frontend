@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import useFetch from '@/hooks/useFetch';
-import { profileService, projectService, skillService, experienceService, testimonialService } from '@/services/api';
+import { profileService, projectService, skillService, experienceService } from '@/services/api';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 
@@ -96,7 +96,6 @@ const Home = () => {
   const { data: skills } = useFetch(skillService.getAll);
   const { data: allProjects } = useFetch(projectService.getAll);
   const { data: experiences } = useFetch(experienceService.getAll);
-  const { data: testimonials } = useFetch(testimonialService.getAll);
 
   const topSkills = skills?.slice(0, 8) || [];
   const featuredProjects = projects?.slice(0, 3) || [];
@@ -116,8 +115,9 @@ const Home = () => {
   return (
     <div>
       <SEO
+        pageKey="home"
         title={profile?.fullName ? `${profile.fullName} — Software Engineer` : undefined}
-        description={seoDescription}
+        description={seoDescription || undefined}
       />
       {/* ─── HERO ─────────────────────────────── */}
       <section style={{
@@ -525,98 +525,6 @@ const Home = () => {
                 </button>
               </Link>
             </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* ─── TESTIMONIALS ────────────────────── */}
-      {testimonials?.length > 0 && (
-        <section className="section" style={{ borderTop: '1px solid rgba(99,102,241,0.08)' }}>
-          <div className="section-inner">
-            <div style={{ textAlign: 'center', marginBottom: 12 }}>
-              <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>Kind Words</span>
-            </div>
-            <motion.h2
-              className="section-title"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              What People Say
-            </motion.h2>
-            <p className="section-subtitle">Feedback from clients and collaborators</p>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: 24,
-              marginTop: 16,
-            }}>
-              {testimonials.map((t, i) => (
-                <motion.div
-                  key={t._id}
-                  className="glow-card"
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 20 }}
-                >
-                  {/* Quote mark */}
-                  <div style={{
-                    fontSize: 48, lineHeight: 1, color: 'var(--color-primary-light)',
-                    opacity: 0.35, fontFamily: 'Georgia, serif', marginTop: -8,
-                  }}>
-                    &ldquo;
-                  </div>
-
-                  {/* Quote text */}
-                  <p style={{
-                    color: 'var(--color-text)',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.8,
-                    flex: 1,
-                    marginTop: -20,
-                  }}>
-                    {t.quote}
-                  </p>
-
-                  {/* Stars */}
-                  {t.rating > 0 && (
-                    <div style={{ display: 'flex', gap: 3 }}>
-                      {Array.from({ length: 5 }).map((_, s) => (
-                        <span key={s} style={{
-                          color: s < t.rating ? '#f59e0b' : 'rgba(99,102,241,0.2)',
-                          fontSize: '1rem',
-                        }}>★</span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Author */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, borderTop: '1px solid rgba(99,102,241,0.1)', paddingTop: 18 }}>
-                    <Avatar
-                      src={t.avatar || undefined}
-                      style={{
-                        background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
-                        color: '#fff',
-                        fontWeight: 700,
-                        fontSize: '1rem',
-                        width: 44, height: 44, lineHeight: '44px', flexShrink: 0,
-                      }}
-                    >
-                      {!t.avatar && (t.name?.[0]?.toUpperCase() || '?')}
-                    </Avatar>
-                    <div>
-                      <div style={{ color: 'var(--color-heading)', fontWeight: 700, fontSize: '0.95rem' }}>{t.name}</div>
-                      <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>
-                        {[t.role, t.company].filter(Boolean).join(' · ')}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </section>
       )}

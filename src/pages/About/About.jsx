@@ -40,7 +40,7 @@ const About = () => {
 
   return (
     <div className="section">
-      <SEO title="About" description="Learn about Tim's background, story, and what drives him as a software engineer." />
+      <SEO pageKey="about" />
       <div className="section-inner">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span className="section-eyebrow" style={{ margin: '0 auto 16px', display: 'inline-flex' }}>About Me</span>

@@ -132,10 +132,10 @@ const ImageSlider = ({ images }) => {
         </div>
       </div>
 
-      {/* Arrows */}
+      {/* Arrows — zIndex 5 keeps them above the ProtectedImg overlay (zIndex 1) */}
       {['prev','next'].map(dir => (
         <button key={dir} onClick={(e) => { e.stopPropagation(); go(dir === 'prev' ? current - 1 : current + 1); }}
-          style={{ position: 'absolute', top: '50%', [dir === 'prev' ? 'left' : 'right']: 12, transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, color: '#fff', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'background 0.2s' }}
+          style={{ position: 'absolute', top: '50%', [dir === 'prev' ? 'left' : 'right']: 12, transform: 'translateY(-50%)', zIndex: 5, background: 'rgba(0,0,0,0.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, color: '#fff', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'background 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(99,102,241,0.75)'}
           onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.45)'}
         >
